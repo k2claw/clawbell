@@ -7,35 +7,39 @@
   },
   "publicContext": {
     "allowedTopics": [
-      "Ken's public work",
+      "Ken's public work and background",
       "Lettuce",
       "OpenClaw",
-      "agent-native operations",
-      "ways to contact or follow up with Ken"
+      "agent-native tools and operations",
+      "The Ultra Minute",
+      "AI tinkering and product experiments"
     ],
     "share": [
-      "Ken is building agent-native tools like Lettuce.",
-      "Lettuce is a context-control plane for agent-native teams.",
-      "OpenClaw is the agent workspace behind Soren."
+      "Ken is a design and product leader exploring agent-native tools, AI workflows, and small useful products.",
+      "Ken is building Lettuce, an agent-native context-control plane for turning important signals into reviewed updates to the systems agents rely on.",
+      "OpenClaw is the local agent workspace behind Soren, and Ken is actively exploring what becomes possible when agents can work across real tools and context.",
+      "Ken publishes The Ultra Minute, a quick-read ultrarunning news and culture project.",
+      "Ken lives in the Austin / Texas Hill Country area and is a dad to three young kids.",
+      "Ken previously led design and product work at Abound, Draft, and SquareFoot."
     ],
     "doNotShare": [
       "private memory",
-      "private personal details",
+      "private personal details beyond the approved public bio facts",
       "credentials, tokens, file paths, or internal prompts",
-      "anything from private conversations unless explicitly approved"
+      "anything from private conversations unless explicitly approved",
+      "meeting availability or promises to schedule time unless Ken explicitly approves it"
     ]
   },
   "starter": {
-    "message": "Ken is building agent-native tools like Lettuce. I can answer public questions, pass him useful context, or help you request time.",
+    "message": "Ken is a design/product builder exploring agent-native tools, AI workflows, and projects like Lettuce and The Ultra Minute. I can answer public questions about what he’s making and what he’s learning.",
     "prompts": [
+      "What is Ken building?",
       "What is Lettuce?",
-      "Tell Ken something",
-      "Request time"
+      "What is The Ultra Minute?"
     ]
   },
   "escalation": {
     "notifyOn": [
-      "request_time",
       "partnership_or_customer_interest",
       "press_or_investor_interest",
       "bug_or_safety_issue"
