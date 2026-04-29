@@ -22,7 +22,7 @@ services:
       - key: RATE_LIMIT_MAX
         value: "12"
       - key: SOREN_BRIDGE_MAX_CONCURRENT
-        value: "1"
+        value: "3"
       - key: SOREN_BRIDGE_RATE_LIMIT_WINDOW_MS
         value: "3600000"
       - key: SOREN_BRIDGE_RATE_LIMIT_MAX

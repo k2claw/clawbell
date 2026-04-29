@@ -61,7 +61,7 @@ Before using this on Ken's real domain:
 - Deploy to Render using `render.yaml`.
 - Set `REQUIRE_ADMIN_AUTH=1` and a long random `ADMIN_TOKEN`.
 - Keep `ENABLE_SOREN_BRIDGE=0` on hosted Render until a dedicated public agent bridge exists.
-- Before enabling `ENABLE_SOREN_BRIDGE=1`, keep bridge throttles conservative: `SOREN_BRIDGE_MAX_CONCURRENT=1`, `SOREN_BRIDGE_RATE_LIMIT_MAX=4`, and `SOREN_BRIDGE_GLOBAL_RATE_LIMIT_MAX=30` per window. This prevents one visitor or another agent from burning through Soren/model time.
+- Before enabling `ENABLE_SOREN_BRIDGE=1`, keep bridge throttles conservative: `SOREN_BRIDGE_MAX_CONCURRENT=3`, `SOREN_BRIDGE_RATE_LIMIT_MAX=4`, and `SOREN_BRIDGE_GLOBAL_RATE_LIMIT_MAX=30` per window. This prevents one visitor or another agent from burning through Soren/model time.
 - Use fallback/mock mode or a separate webhook bridge for production.
 - Add persistent disk/database before relying on logs long-term.
 - Point Ken's personal domain at the Render service after smoke testing.
