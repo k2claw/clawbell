@@ -1,0 +1,29 @@
+:root { --blue:#0a84ff; --ink:#111827; --muted:#64748b; --line:#dbe3ef; --bg:#eef3f8; }
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin:0; background:var(--bg); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif; }
+.chat { min-height:100dvh; width:min(100%, 52rem); margin:0 auto; display:grid; grid-template-rows:auto 1fr auto auto; background:#fff; box-shadow:0 0 0 1px rgba(15,23,42,.06); }
+.topbar { min-height:64px; padding:calc(.72rem + env(safe-area-inset-top)) 1rem .72rem; display:flex; align-items:center; justify-content:space-between; gap:.75rem; background:rgba(255,255,255,.92); backdrop-filter:blur(18px); border-bottom:1px solid var(--line); }
+.identity { display:flex; align-items:center; gap:.7rem; min-width:0; }
+.avatar { width:42px; height:42px; display:grid; place-items:center; border-radius:50%; color:white; background:linear-gradient(180deg,#1d4ed8,#0a84ff); }
+.identity strong, .identity span { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.identity span { color:var(--muted); font-size:.84rem; }
+.badge { padding:.38rem .58rem; border:1px solid #bbf7d0; border-radius:999px; background:#ecfdf5; color:#047857; font-size:.76rem; font-weight:750; }
+.messages { min-height:0; overflow:auto; display:flex; flex-direction:column; gap:.72rem; padding:1rem; background:linear-gradient(180deg,#f8fbff,#eef3f9); }
+.spacer { flex:1 1 auto; min-height:2rem; }
+.bubble { max-width:min(86%, 34rem); padding:.8rem .95rem; border-radius:1.2rem; line-height:1.42; box-shadow:0 6px 18px rgba(15,23,42,.07); }
+.bubble p { margin:.25rem 0 0; }
+.bubble.bot { align-self:flex-start; background:white; border-bottom-left-radius:.35rem; }
+.bubble.user { align-self:flex-end; background:var(--blue); color:white; border-bottom-right-radius:.35rem; }
+.bubble.system { align-self:center; max-width:92%; background:#e7edf6; color:#334155; box-shadow:none; text-align:center; font-size:.9rem; }
+.quick { display:flex; flex-wrap:wrap; gap:.45rem; margin-top:.72rem; }
+.quick button { min-height:36px; border:1px solid #bfdbfe; border-radius:999px; padding:.45rem .72rem; background:#eff6ff; color:#0758c7; font:inherit; font-size:.9rem; font-weight:700; cursor:pointer; }
+.handoff { margin:0; padding:.78rem 1rem; display:grid; gap:.62rem; border-top:1px solid var(--line); background:#f8fafc; }
+.handoff[hidden] { display:none!important; }
+.handoff label { display:grid; gap:.32rem; color:#475569; font-size:.86rem; font-weight:700; }
+.handoff input, .handoff textarea, .composer textarea { width:100%; border:1px solid #cbd5e1; border-radius:1rem; padding:.72rem .82rem; font:inherit; background:white; resize:none; }
+.handoff button, .composer button { min-height:44px; border:0; border-radius:999px; padding:0 .95rem; background:var(--blue); color:white; font:inherit; font-weight:800; cursor:pointer; }
+.composer { padding:.75rem 1rem calc(.75rem + env(safe-area-inset-bottom)); display:grid; grid-template-columns:1fr auto; gap:.55rem; align-items:end; border-top:1px solid var(--line); background:rgba(255,255,255,.94); backdrop-filter:blur(18px); }
+.composer textarea { min-height:44px; max-height:112px; }
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+@media (max-width:560px) { .chat { width:100%; box-shadow:none; } .badge { display:none; } .messages { padding:.85rem; } .bubble { max-width:90%; } .quick { flex-direction:column; align-items:flex-start; } .composer { padding-inline:.75rem; } }

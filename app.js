@@ -1,0 +1,120 @@
+const messages = document.querySelector('#messages');
+const composer = document.querySelector('#composer');
+const prompt = document.querySelector('#prompt');
+const send = document.querySelector('#send');
+const handoff = document.querySelector('#handoff');
+const agentName = document.querySelector('#agentName');
+const agentSubtitle = document.querySelector('#agentSubtitle');
+const welcomeTitle = document.querySelector('#welcomeTitle');
+const welcomeMessage = document.querySelector('#welcomeMessage');
+const starterPrompts = document.querySelector('#starterPrompts');
+const email = document.querySelector('#email');
+const note = document.querySelector('#note');
+const visitorId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
+const history = [];
+
+
+async function loadConfig() {
+  try {
+    const res = await fetch('/api/config');
+    const config = await res.json();
+    const owner = config.owner || {};
+    const starter = config.starter || {};
+    agentName.textContent = owner.agentName || 'Soren';
+    agentSubtitle.textContent = owner.agentSubtitle || `${owner.name || 'Owner'}'s public agent`;
+    welcomeTitle.textContent = `Hey, I’m ${owner.agentName || 'Soren'}.`;
+    welcomeMessage.textContent = starter.message || welcomeMessage.textContent;
+    starterPrompts.innerHTML = '';
+    (starter.prompts || ['What can you help with?', 'Leave a note', 'Request time']).forEach((label) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.dataset.prompt = label;
+      button.textContent = label;
+      button.addEventListener('click', () => sendMessage(label));
+      starterPrompts.append(button);
+    });
+  } catch {
+    ['What is Lettuce?', 'Tell Ken something', 'Request time'].forEach((label) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.dataset.prompt = label;
+      button.textContent = label;
+      button.addEventListener('click', () => sendMessage(label));
+      starterPrompts.append(button);
+    });
+  }
+}
+
+function escapeHtml(text) {
+  return String(text).replace(/[&<>'"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[c]));
+}
+
+function addBubble(role, html) {
+  const bubble = document.createElement('article');
+  bubble.className = `bubble ${role}`;
+  bubble.innerHTML = html;
+  messages.append(bubble);
+  messages.scrollTop = messages.scrollHeight;
+  return bubble;
+}
+
+async function sendMessage(text) {
+  const value = String(text || '').trim();
+  if (!value) return;
+  prompt.value = '';
+  addBubble('user', escapeHtml(value));
+  history.push({ role: 'user', text: value });
+  const typing = addBubble('bot', 'Checking public-safe context…');
+  send.disabled = true;
+  prompt.disabled = true;
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ message: value, visitorId, history })
+    });
+    const data = await res.json();
+    typing.remove();
+    const reply = data.reply || 'I can help with public questions or save a handoff for Ken.';
+    addBubble('bot', escapeHtml(reply));
+    history.push({ role: 'assistant', text: reply });
+    if (data.handoffSuggested) {
+      handoff.hidden = false;
+      if (!note.value) note.value = value;
+      email.focus();
+    }
+  } catch {
+    typing.remove();
+    addBubble('system', 'Chat failed. Try again in a moment.');
+  } finally {
+    send.disabled = false;
+    prompt.disabled = false;
+    prompt.focus();
+  }
+}
+
+composer.addEventListener('submit', event => {
+  event.preventDefault();
+  sendMessage(prompt.value);
+});
+
+loadConfig();
+
+handoff.addEventListener('submit', async event => {
+  event.preventDefault();
+  const payload = { email: email.value.trim(), note: note.value.trim() };
+  if (!payload.email || !payload.note) return addBubble('system', 'Add an email and a short note first.');
+  try {
+    const res = await fetch('/api/handoff', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('handoff failed');
+    addBubble('system', 'Saved. I’ll make sure Ken has the context.');
+    handoff.reset();
+    handoff.hidden = true;
+  } catch {
+    addBubble('system', 'Could not save the handoff. Try again in a moment.');
+  }
+});
