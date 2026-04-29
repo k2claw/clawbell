@@ -131,8 +131,11 @@ async function askSorenPublicSafe(message, config) {
   return reply;
 }
 
-function fallbackReply(message) {
+function fallbackReply(message, config = null) {
   const lower = message.toLowerCase();
+  if (/(what.*ken.*(building|making|doing)|ken.*(building|making|doing)|what.*building)/i.test(message)) {
+    return 'Ken runs The Ultra Minute, an AI-supported media company for quick-read ultrarunning news and culture. He is also exploring opportunities in agentic AI, including tools like Lettuce. A lot of the work right now is hands-on: tinkering with OpenClaw, testing what agents can do with real context and tools, and turning the useful parts into products.';
+  }
   if (lower.includes('lettuce')) return 'Lettuce is Ken and Soren’s current product sprint: a context-control plane for agent-native teams. It helps turn important signals into reviewed updates to the company brain, docs, issues, and workflows agents rely on.';
   if (lower.includes('openclaw') || lower.includes('agent')) return 'OpenClaw is the local agent workspace behind Soren. This public chat is intentionally narrow: public questions, useful context, and handoffs only. No private memory, tools, credentials, or actions are exposed.';
   if (lower.includes('time') || lower.includes('call') || lower.includes('book') || lower.includes('meet')) return 'I can help with that. Share your email and one useful sentence about what you want to discuss, and I’ll package it for Ken.';
@@ -191,12 +194,12 @@ async function handleChat(req, res) {
       return json(res, 200, { reply, handoffSuggested, source: 'soren-bridge' });
     } catch (error) {
       await writeJsonl('soren-bridge-errors.jsonl', { ts: new Date().toISOString(), error: String(error?.message || error) });
-      const reply = fallbackReply(message);
+      const reply = fallbackReply(message, config);
       await writeJsonl('conversations.jsonl', { ts: new Date().toISOString(), visitorId, message, reply, handoffSuggested, source: 'fallback', degraded: true, summary: summarizeForOwner(history, message, reply, handoffSuggested) });
       return json(res, 200, { reply, handoffSuggested, source: 'fallback', degraded: true });
     }
   }
-  const reply = fallbackReply(message);
+  const reply = fallbackReply(message, config);
   await writeJsonl('conversations.jsonl', { ts: new Date().toISOString(), visitorId, message, reply, handoffSuggested, source: 'fallback', summary: summarizeForOwner(history, message, reply, handoffSuggested) });
   return json(res, 200, { reply, handoffSuggested, source: 'fallback' });
 }

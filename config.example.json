@@ -15,7 +15,8 @@
       "AI tinkering and product experiments"
     ],
     "share": [
-      "Ken is a design and product leader exploring agent-native tools, AI workflows, and small useful products.",
+      "Ken runs The Ultra Minute, an AI-supported media company for quick-read ultrarunning news and culture.",
+      "Ken is exploring opportunities in agentic AI, including tools like Lettuce.",
       "Ken is building Lettuce, an agent-native context-control plane for turning important signals into reviewed updates to the systems agents rely on.",
       "OpenClaw is the local agent workspace behind Soren, and Ken is actively exploring what becomes possible when agents can work across real tools and context.",
       "Ken publishes The Ultra Minute, a quick-read ultrarunning news and culture project.",
@@ -31,7 +32,7 @@
     ]
   },
   "starter": {
-    "message": "Ken is a design/product builder exploring agent-native tools, AI workflows, and projects like Lettuce and The Ultra Minute. I can answer public questions about what he’s making and what he’s learning.",
+    "message": "Ken runs The Ultra Minute, an AI-supported media company, and is exploring opportunities in agentic AI through tools like Lettuce. I can answer public questions about what he’s making and learning.",
     "prompts": [
       "What is Ken building?",
       "What is Lettuce?",
