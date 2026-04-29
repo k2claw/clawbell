@@ -7,7 +7,11 @@
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-  <main class="chat" aria-label="Chat with Soren">
+  <button id="widgetLauncher" class="widget-launcher" type="button" aria-controls="chatRoot" aria-expanded="false">
+    <span class="launcher-avatar" aria-hidden="true">🪶</span>
+    <span>Talk to Soren</span>
+  </button>
+  <main id="chatRoot" class="chat" aria-label="Chat with Soren">
     <header class="topbar">
       <div class="identity">
         <div class="avatar" aria-hidden="true">🪶</div>

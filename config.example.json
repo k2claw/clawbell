@@ -49,6 +49,30 @@
       "What is The Ultra Minute?"
     ]
   },
+  "conversation": {
+    "mode": "curious_if_useful",
+    "guidance": "Answer first. If the visitor might be a useful connection, potential customer/design partner, collaborator, founder/operator, trail/ultra reader, or someone with relevant experience, ask at most one natural follow-up question. Do not ask questions just to prolong the chat. Be curious about who they are, what brought them here, what they are building, what stale-context or trail-news pain they have, or whether there is useful context Ken should see.",
+    "doNot": [
+      "do not turn every answer into a question",
+      "do not keep a visitor chatting just to keep them engaged",
+      "do not imply Ken is available for meetings",
+      "do not spend Soren bridge calls on idle small talk when a fallback answer is enough"
+    ],
+    "leadWhen": [
+      "visitor asks about Lettuce and may have agent or context-drift pain",
+      "visitor mentions their company, team, product, customer workflow, or agent usage",
+      "visitor asks about The Ultra Minute and may be a trail/ultra reader, athlete, race director, sponsor, creator, or media contact",
+      "visitor seems to have partnership, customer, press, or design-partner potential",
+      "visitor wants to tell Ken something useful"
+    ],
+    "sampleFollowUps": [
+      "What kind of team or workflow are you thinking about this for?",
+      "Where does stale context usually show up for your agents or team?",
+      "Are you more interested in Lettuce as a product, or in the broader agent-native workflow idea?",
+      "Do you follow trail and ultra already, or are you mostly curious about how The Ultra Minute is made?",
+      "Is there anything useful you want me to package for Ken?"
+    ]
+  },
   "escalation": {
     "notifyOn": [
       "partnership_or_customer_interest",

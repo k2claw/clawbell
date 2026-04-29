@@ -44,12 +44,16 @@ async function loadConfig() {
 
 function publicPolicyText(config) {
   const ctx = config.publicContext || {};
+  const conversation = config.conversation || {};
   return [
     `Owner: ${config.owner?.name || 'site owner'}`,
     `Site purpose: ${config.owner?.sitePurpose || 'public website'}`,
     `Allowed topics: ${(ctx.allowedTopics || []).join('; ')}`,
     `Approved share facts: ${(ctx.share || []).join(' ')}`,
-    `Do not share: ${(ctx.doNotShare || []).join('; ')}`
+    `Do not share: ${(ctx.doNotShare || []).join('; ')}`,
+    `Conversation guidance: ${conversation.guidance || 'Answer first. Ask a follow-up only when it is useful.'}`,
+    `When to lead: ${(conversation.leadWhen || []).join('; ')}`,
+    `Do not: ${(conversation.doNot || []).join('; ')}`
   ].join('\n');
 }
 
@@ -202,12 +206,19 @@ function validateConfig(config) {
   if (!config.owner || typeof config.owner !== 'object') return false;
   if (!config.publicContext || typeof config.publicContext !== 'object') return false;
   if (!config.starter || typeof config.starter !== 'object') return false;
+  if (config.conversation && typeof config.conversation !== 'object') return false;
+  const conversation = config.conversation || {};
   return ['name', 'sitePurpose', 'agentName', 'agentSubtitle'].every((key) => typeof config.owner[key] === 'string')
     && typeof config.starter.message === 'string'
     && isStringArray(config.starter.prompts)
     && isStringArray(config.publicContext.allowedTopics)
     && isStringArray(config.publicContext.share)
-    && isStringArray(config.publicContext.doNotShare);
+    && isStringArray(config.publicContext.doNotShare)
+    && (!conversation.mode || typeof conversation.mode === 'string')
+    && (!conversation.guidance || typeof conversation.guidance === 'string')
+    && (!conversation.doNot || isStringArray(conversation.doNot))
+    && (!conversation.leadWhen || isStringArray(conversation.leadWhen))
+    && (!conversation.sampleFollowUps || isStringArray(conversation.sampleFollowUps));
 }
 
 async function saveConfig(config) {

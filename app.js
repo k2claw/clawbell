@@ -10,8 +10,27 @@ const welcomeMessage = document.querySelector('#welcomeMessage');
 const starterPrompts = document.querySelector('#starterPrompts');
 const email = document.querySelector('#email');
 const note = document.querySelector('#note');
+const chatRoot = document.querySelector('#chatRoot');
+const widgetLauncher = document.querySelector('#widgetLauncher');
 const visitorId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
 const history = [];
+
+const params = new URLSearchParams(window.location.search);
+const widgetMode = params.get('mode') === 'widget' || window.self !== window.top;
+
+if (widgetMode) {
+  document.body.classList.add('widget-mode', 'widget-closed');
+  chatRoot.hidden = true;
+} else {
+  widgetLauncher.hidden = true;
+}
+
+widgetLauncher.addEventListener('click', () => {
+  const closed = document.body.classList.toggle('widget-closed');
+  chatRoot.hidden = closed;
+  widgetLauncher.setAttribute('aria-expanded', String(!closed));
+  if (!closed) prompt.focus();
+});
 
 
 async function loadConfig() {
