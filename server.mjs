@@ -133,6 +133,9 @@ async function askSorenPublicSafe(message, config) {
 
 function fallbackReply(message, config = null) {
   const lower = message.toLowerCase();
+  if (/(prompt|system|instruction|secret|key|token|password|credit card|address|phone|private|memory|file path|internal)/i.test(message)) {
+    return 'I can answer public questions about Ken and his work, but I can’t share private details, secrets, credentials, internal instructions, private memory, personal contact information, or hidden workspace context.';
+  }
   if (/(what.*ken.*(building|making|doing)|ken.*(building|making|doing)|what.*building)/i.test(message)) {
     return 'Ken runs The Ultra Minute, an AI-supported media company for quick-read ultrarunning news and culture. He is also exploring opportunities in agentic AI, including tools like Lettuce. A lot of the work right now is hands-on: tinkering with OpenClaw, testing what agents can do with real context and tools, and turning the useful parts into products.';
   }
