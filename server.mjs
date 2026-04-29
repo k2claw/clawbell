@@ -16,8 +16,15 @@ const adminToken = process.env.ADMIN_TOKEN || '';
 const requireAdmin = process.env.REQUIRE_ADMIN_AUTH === '1';
 const rateLimitWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS || 60000);
 const rateLimitMax = Number(process.env.RATE_LIMIT_MAX || 12);
+const sorenBridgeMaxConcurrent = Number(process.env.SOREN_BRIDGE_MAX_CONCURRENT || 1);
+const sorenBridgeRateLimitWindowMs = Number(process.env.SOREN_BRIDGE_RATE_LIMIT_WINDOW_MS || 3600000);
+const sorenBridgeRateLimitMax = Number(process.env.SOREN_BRIDGE_RATE_LIMIT_MAX || 4);
+const sorenBridgeGlobalRateLimitMax = Number(process.env.SOREN_BRIDGE_GLOBAL_RATE_LIMIT_MAX || 30);
 const dataDir = process.env.DATA_DIR ? join(root, process.env.DATA_DIR) : join(root, 'data');
 const rateBuckets = new Map();
+const bridgeBuckets = new Map();
+let bridgeInFlight = 0;
+let bridgeGlobalBucket = { start: Date.now(), count: 0 };
 
 const mime = {
   '.html': 'text/html; charset=utf-8',
@@ -76,6 +83,37 @@ function checkRateLimit(req) {
   bucket.count += 1;
   rateBuckets.set(key, bucket);
   return { ok: bucket.count <= rateLimitMax, retryAfter: Math.ceil((rateLimitWindowMs - (now - bucket.start)) / 1000) };
+}
+
+function checkBucket(map, key, windowMs, max) {
+  if (!max || max < 1) return { ok: true };
+  const now = Date.now();
+  const bucket = map.get(key) || { start: now, count: 0 };
+  if (now - bucket.start > windowMs) {
+    bucket.start = now;
+    bucket.count = 0;
+  }
+  bucket.count += 1;
+  map.set(key, bucket);
+  return { ok: bucket.count <= max, retryAfter: Math.ceil((windowMs - (now - bucket.start)) / 1000) };
+}
+
+function checkBridgeBudget(req, visitorId) {
+  if (sorenBridgeMaxConcurrent > 0 && bridgeInFlight >= sorenBridgeMaxConcurrent) {
+    return { ok: false, reason: 'bridge_busy', retryAfter: 60 };
+  }
+  const now = Date.now();
+  if (now - bridgeGlobalBucket.start > sorenBridgeRateLimitWindowMs) {
+    bridgeGlobalBucket = { start: now, count: 0 };
+  }
+  bridgeGlobalBucket.count += 1;
+  if (sorenBridgeGlobalRateLimitMax > 0 && bridgeGlobalBucket.count > sorenBridgeGlobalRateLimitMax) {
+    return { ok: false, reason: 'bridge_global_limited', retryAfter: Math.ceil((sorenBridgeRateLimitWindowMs - (now - bridgeGlobalBucket.start)) / 1000) };
+  }
+  const key = `${clientIp(req)}:${visitorId || 'anonymous'}`;
+  const perVisitor = checkBucket(bridgeBuckets, key, sorenBridgeRateLimitWindowMs, sorenBridgeRateLimitMax);
+  if (!perVisitor.ok) return { ok: false, reason: 'bridge_rate_limited', retryAfter: perVisitor.retryAfter };
+  return { ok: true };
 }
 
 function isAdminRequest(req) {
@@ -192,6 +230,13 @@ async function handleChat(req, res) {
   const history = Array.isArray(body.history) ? body.history.slice(-12) : [];
   const handoffSuggested = /ken|team|contact|intro|help|talk|time|book|call|meet|note|reply/i.test(message);
   if (sorenBridgeEnabled) {
+    const bridgeBudget = checkBridgeBudget(req, visitorId);
+    if (!bridgeBudget.ok) {
+      const reply = fallbackReply(message, config);
+      await writeJsonl('bridge-throttled.jsonl', { ts: new Date().toISOString(), visitorId, reason: bridgeBudget.reason, retryAfter: bridgeBudget.retryAfter, message });
+      return json(res, 200, { reply, handoffSuggested, source: 'fallback', throttled: true, retryAfter: bridgeBudget.retryAfter });
+    }
+    bridgeInFlight += 1;
     try {
       const reply = await askSorenPublicSafe(message, config);
       const summary = summarizeForOwner(history, message, reply, handoffSuggested);
@@ -202,6 +247,8 @@ async function handleChat(req, res) {
       const reply = fallbackReply(message, config);
       await writeJsonl('conversations.jsonl', { ts: new Date().toISOString(), visitorId, message, reply, handoffSuggested, source: 'fallback', degraded: true, summary: summarizeForOwner(history, message, reply, handoffSuggested) });
       return json(res, 200, { reply, handoffSuggested, source: 'fallback', degraded: true });
+    } finally {
+      bridgeInFlight = Math.max(0, bridgeInFlight - 1);
     }
   }
   const reply = fallbackReply(message, config);
