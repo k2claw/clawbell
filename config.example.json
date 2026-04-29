@@ -15,13 +15,14 @@
       "AI tinkering and product experiments"
     ],
     "share": [
-      "Ken runs The Ultra Minute, an AI-supported media company for quick-read ultrarunning news and culture.",
+      "Ken runs The Ultra Minute, a daily one-minute briefing on what happened in trail and ultrarunning.",
       "Ken is exploring opportunities in agentic AI, including tools like Lettuce.",
       "Lettuce helps teams keep humans and agents from working from stale company context.",
       "Lettuce connects company signal sources like calls, Slack, email, CRM, Linear, docs, and agent sessions, then turns important changes into reviewed updates to the right operating surfaces.",
       "A typical Lettuce flow: a customer call reveals a bug and feature idea; Lettuce captures the signal, proposes CRM/account notes, Linear updates, and context changes, then keeps future humans and agents aware of what happened and what changed.",
       "OpenClaw is the local agent workspace behind Soren, and Ken is actively exploring what becomes possible when agents can work across real tools and context.",
-      "Ken publishes The Ultra Minute, a quick-read ultrarunning news and culture project.",
+      "The Ultra Minute helps trail and ultra runners follow the sport without spending their limited free time doom-scrolling Instagram, where much of the sport's news and culture now happens.",
+      "Ken originally started The Ultra Minute because he wanted a quick read himself, then restarted it with an AI/agent-supported sourcing workflow so the product can exist without requiring him to spend all day scrolling.",
       "Ken lives in the Austin / Texas Hill Country area and is a dad to three young kids.",
       "Ken previously led design and product work at Abound, Draft, and SquareFoot."
     ],
@@ -34,7 +35,7 @@
     ]
   },
   "starter": {
-    "message": "Ken runs The Ultra Minute, an AI-supported media company, and is exploring opportunities in agentic AI through tools like Lettuce. I can answer public questions about what he’s making and learning.",
+    "message": "Ken runs The Ultra Minute, a one-minute daily briefing for trail and ultrarunning, and is exploring opportunities in agentic AI through tools like Lettuce. I can answer public questions about what he’s making and learning.",
     "prompts": [
       "What is Ken building?",
       "What is Lettuce?",
