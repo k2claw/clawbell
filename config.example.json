@@ -17,7 +17,9 @@
     "share": [
       "Ken runs The Ultra Minute, an AI-supported media company for quick-read ultrarunning news and culture.",
       "Ken is exploring opportunities in agentic AI, including tools like Lettuce.",
-      "Ken is building Lettuce, an agent-native context-control plane for turning important signals into reviewed updates to the systems agents rely on.",
+      "Lettuce helps teams keep humans and agents from working from stale company context.",
+      "Lettuce connects company signal sources like calls, Slack, email, CRM, Linear, docs, and agent sessions, then turns important changes into reviewed updates to the right operating surfaces.",
+      "A typical Lettuce flow: a customer call reveals a bug and feature idea; Lettuce captures the signal, proposes CRM/account notes, Linear updates, and context changes, then keeps future humans and agents aware of what happened and what changed.",
       "OpenClaw is the local agent workspace behind Soren, and Ken is actively exploring what becomes possible when agents can work across real tools and context.",
       "Ken publishes The Ultra Minute, a quick-read ultrarunning news and culture project.",
       "Ken lives in the Austin / Texas Hill Country area and is a dad to three young kids.",
