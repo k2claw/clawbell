@@ -162,6 +162,8 @@ async function askSorenPublicSafe(message, config) {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
+        // Keeps temporary localtunnel bridges machine-to-machine friendly during dogfood.
+        'bypass-tunnel-reminder': 'true',
         ...(sorenBridgeToken ? { authorization: `Bearer ${sorenBridgeToken}` } : {})
       },
       body: JSON.stringify({ prompt, sessionId: sorenSessionId })
@@ -271,6 +273,7 @@ async function handleChat(req, res) {
       await writeJsonl('conversations.jsonl', { ts: new Date().toISOString(), visitorId, message, reply, handoffSuggested, source: 'soren-bridge', summary });
       return json(res, 200, { reply, handoffSuggested, source: 'soren-bridge' });
     } catch (error) {
+      console.error('[soren-bridge]', String(error?.message || error));
       await writeJsonl('soren-bridge-errors.jsonl', { ts: new Date().toISOString(), error: String(error?.message || error) });
       const reply = fallbackReply(message, config);
       await writeJsonl('conversations.jsonl', { ts: new Date().toISOString(), visitorId, message, reply, handoffSuggested, source: 'fallback', degraded: true, summary: summarizeForOwner(history, message, reply, handoffSuggested) });
@@ -312,6 +315,25 @@ const server = http.createServer(async (req, res) => {
     } catch {
       return json(res, 200, { conversations: [] });
     }
+  }
+  if (req.url === '/api/bridge-status' && req.method === 'GET') {
+    if (!requireAdminRequest(req, res)) return;
+    let bridgeHost = null;
+    try { bridgeHost = sorenBridgeUrl ? new URL(sorenBridgeUrl).host : null; } catch { bridgeHost = 'invalid_url'; }
+    let recentErrors = [];
+    try {
+      const text = await readFile(join(dataDir, 'soren-bridge-errors.jsonl'), 'utf8');
+      recentErrors = text.trim().split('\n').filter(Boolean).slice(-10).map((line) => JSON.parse(line));
+    } catch {}
+    return json(res, 200, {
+      enabled: sorenBridgeEnabled,
+      hasUrl: Boolean(sorenBridgeUrl),
+      bridgeHost,
+      hasToken: Boolean(sorenBridgeToken),
+      maxConcurrent: sorenBridgeMaxConcurrent,
+      inFlight: bridgeInFlight,
+      recentErrors
+    });
   }
   if (req.url === '/api/chat' && req.method === 'POST') return handleChat(req, res);
   if (req.url === '/api/handoff' && req.method === 'POST') return handleHandoff(req, res);
