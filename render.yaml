@@ -12,7 +12,11 @@ services:
       - key: REQUIRE_ADMIN_AUTH
         value: "1"
       - key: ENABLE_SOREN_BRIDGE
-        value: "0"
+        value: "1"
+      - key: SOREN_BRIDGE_URL
+        sync: false
+      - key: SOREN_BRIDGE_TOKEN
+        sync: false
       - key: ADMIN_TOKEN
         sync: false
       - key: MAX_MESSAGE_CHARS

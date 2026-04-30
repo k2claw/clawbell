@@ -12,6 +12,8 @@ const maxMessageChars = Number(process.env.MAX_MESSAGE_CHARS || 1200);
 const sorenBridgeEnabled = process.env.ENABLE_SOREN_BRIDGE === '1';
 const openclawBin = process.env.OPENCLAW_BIN || '/Users/oc/.nvm/versions/node/v22.22.0/bin/openclaw';
 const sorenSessionId = process.env.SOREN_SESSION_ID || 'clawbell-public-v0';
+const sorenBridgeUrl = process.env.SOREN_BRIDGE_URL || '';
+const sorenBridgeToken = process.env.SOREN_BRIDGE_TOKEN || '';
 const adminToken = process.env.ADMIN_TOKEN || '';
 const requireAdmin = process.env.REQUIRE_ADMIN_AUTH === '1';
 const rateLimitWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS || 60000);
@@ -155,6 +157,21 @@ async function askSorenPublicSafe(message, config) {
     'Answer in 1-3 short paragraphs unless the visitor asks for detail.',
     `Visitor asks: ${message}`
   ].join('\n');
+  if (sorenBridgeUrl) {
+    const response = await fetch(sorenBridgeUrl, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        ...(sorenBridgeToken ? { authorization: `Bearer ${sorenBridgeToken}` } : {})
+      },
+      body: JSON.stringify({ prompt, sessionId: sorenSessionId })
+    });
+    if (!response.ok) throw new Error(`bridge_http_${response.status}`);
+    const data = await response.json();
+    const reply = String(data.reply || '').trim();
+    if (!reply) throw new Error('empty_bridge_reply');
+    return reply;
+  }
   const { stdout } = await execFileAsync(openclawBin, [
     'agent',
     '--agent', 'main',
