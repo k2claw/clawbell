@@ -44,7 +44,7 @@
     ]
   },
   "starter": {
-    "message": "This chat is ClawBell, one of Ken's agent-native projects. Ken also runs The Ultra Minute and is exploring tools like Lettuce. I can answer public questions about what he’s making and learning.",
+    "message": "This is ClawBell, a Ken Seals project: a public-safe Soren for quick questions and handoffs. Ken also runs The Ultra Minute and is exploring tools like Lettuce. Ask what he’s building, or how to get your own claw chat.",
     "prompts": [
       "What is Ken building?",
       "What is Lettuce?",
