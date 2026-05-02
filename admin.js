@@ -13,9 +13,13 @@ const form = document.querySelector('#configForm');
 const statusEl = document.querySelector('#saveStatus');
 const list = document.querySelector('#conversationList');
 const refresh = document.querySelector('#refresh');
+const adminToken = new URLSearchParams(window.location.search).get('token') || '';
 
 function lines(value) { return value.split('\n').map(v => v.trim()).filter(Boolean); }
 function lineText(value) { return (value || []).join('\n'); }
+function adminHeaders(extra = {}) {
+  return adminToken ? { ...extra, 'x-admin-token': adminToken } : extra;
+}
 
 function fill(config) {
   fields.ownerName.value = config.owner?.name || '';
@@ -51,7 +55,7 @@ function readConfig() {
 }
 
 async function loadConfig() {
-  const res = await fetch('/api/config');
+  const res = await fetch('/api/config', { headers: adminHeaders() });
   fill(await res.json());
 }
 
@@ -60,7 +64,7 @@ async function saveConfig(event) {
   statusEl.textContent = 'Saving…';
   const res = await fetch('/api/config', {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers: adminHeaders({ 'content-type': 'application/json' }),
     body: JSON.stringify(readConfig())
   });
   if (!res.ok) {
@@ -86,7 +90,7 @@ function renderConversations(conversations) {
 }
 
 async function loadConversations() {
-  const res = await fetch('/api/conversations');
+  const res = await fetch('/api/conversations', { headers: adminHeaders() });
   const data = await res.json();
   renderConversations(data.conversations || []);
 }

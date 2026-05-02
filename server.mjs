@@ -198,8 +198,9 @@ function fallbackReply(message, config = null) {
     return 'I can answer public questions about Ken and his work, but I can’t share private details, secrets, credentials, internal instructions, private memory, personal contact information, or hidden workspace context.';
   }
   if (/(what.*ken.*(building|making|doing)|ken.*(building|making|doing)|what.*building)/i.test(message)) {
-    return 'Ken runs The Ultra Minute, an AI-supported media company for quick-read ultrarunning news and culture. He is also exploring opportunities in agentic AI, including tools like Lettuce. A lot of the work right now is hands-on: tinkering with OpenClaw, testing what agents can do with real context and tools, and turning the useful parts into products.';
+    return 'Ken runs The Ultra Minute, an AI-supported media company for quick-read ultrarunning news and culture. He is also building ClawBell, this public-safe chat surface, and exploring agentic AI tools like Lettuce. A lot of the work right now is hands-on: tinkering with OpenClaw, testing what agents can do with real context and tools, and turning the useful parts into products.';
   }
+  if (lower.includes('clawbell') || lower.includes('this chat') || lower.includes('claw chat')) return 'ClawBell is Ken’s public-safe chat project: a way to publish a narrow, purpose-specific version of an agent on a website so visitors can ask useful questions or leave context without exposing private memory, tools, or credentials. This page is the first dogfood version.';
   if (lower.includes('lettuce')) return 'Lettuce helps teams keep humans and agents from working from stale company context. It watches the places where important signal already shows up — calls, Slack, email, CRM, Linear, docs, and agent sessions — then turns the meaningful changes into reviewed updates to the right operating surfaces. For example, if a customer call reveals a bug and a feature idea, Lettuce can propose the CRM note, Linear updates, and context changes so the next human or agent working with that customer knows what happened.';
   if (lower.includes('ultra minute') || lower.includes('tum') || lower.includes('trail') || lower.includes('ultrarunning') || lower.includes('ultra running')) return 'The Ultra Minute is Ken’s daily briefing on what happened in trail and ultrarunning, designed to be read in one minute or less. The idea is simple: a lot of the sport’s news and culture happens on Instagram, but many runners would rather spend their limited free time outside, training, working, or with family than doom-scrolling. Ken started it because he wanted that quick read himself, and the new version uses AI/agent-supported sourcing so the briefing can exist without requiring him to live on Instagram.';
   if (/(who.*ken|about ken|ken.*background|ken.*personally|ken.*experience|tell.*ken)/i.test(message)) return 'Ken is a design/product/development hybrid who has spent much of his career in early-stage startups. He was the first or second employee at three startups across marketplaces, fintech, and commercial real estate; at Abound, he joined as the second employee and helped the company grow from zero to Series B and well over 100 employees. He lives in the Texas Hill Country outside Austin with his wife and three young boys, loves trail running and outdoor adventure, and thru-hiked the Appalachian Trail at 19 — an experience he still draws on when things get hard. After taking time off while his kids were young, he is getting hands-on again because recent AI and agent tools feel like a new creative inflection point.';
@@ -288,6 +289,11 @@ async function handleChat(req, res) {
 }
 
 async function handleHandoff(req, res) {
+  const limit = checkRateLimit(req);
+  if (!limit.ok) {
+    res.setHeader('retry-after', String(limit.retryAfter));
+    return json(res, 429, { error: 'rate_limited', retryAfter: limit.retryAfter });
+  }
   const body = await readBody(req);
   if (!body) return json(res, 400, { error: 'invalid_json' });
   const email = String(body.email || '').trim().slice(0, 240);
