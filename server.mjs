@@ -13,7 +13,7 @@ const sorenBridgeEnabled = process.env.ENABLE_SOREN_BRIDGE === '1';
 const openclawBin = process.env.OPENCLAW_BIN || '/Users/oc/.nvm/versions/node/v22.22.0/bin/openclaw';
 const sorenSessionId = process.env.SOREN_SESSION_ID || 'clawbell-public-v0';
 const sorenBridgeUrl = process.env.SOREN_BRIDGE_URL_OVERRIDE || process.env.SOREN_BRIDGE_URL || '';
-const sorenBridgeToken = process.env.SOREN_BRIDGE_TOKEN || '';
+const sorenBridgeToken = process.env.SOREN_BRIDGE_TOKEN_OVERRIDE || process.env.SOREN_BRIDGE_TOKEN || '';
 const adminToken = process.env.ADMIN_TOKEN || '';
 const requireAdmin = process.env.REQUIRE_ADMIN_AUTH === '1';
 const rateLimitWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS || 60000);
