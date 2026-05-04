@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Chat with Soren</title>
+  <title>Ken Seals</title>
+  <meta name="description" content="Ken Seals is a product and design leader building with AI, publishing The Ultra Minute, and exploring agent-native software." />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
@@ -11,7 +12,16 @@
     <span class="launcher-avatar" aria-hidden="true">🪶</span>
     <span>Talk to Soren</span>
   </button>
-  <main id="chatRoot" class="chat" aria-label="Chat with Soren">
+  <main id="chatRoot" class="chat" aria-label="Ken Seals personal site with Soren chat">
+    <nav class="site-top" aria-label="Ken Seals links">
+      <a class="wordmark" href="/">Ken Seals</a>
+      <div class="site-links">
+        <a href="https://theultraminute.com/">The Ultra Minute</a>
+        <a href="https://twitter.com/kenseals">Twitter</a>
+        <a href="https://linkedin.com/in/kenseals">LinkedIn</a>
+      </div>
+    </nav>
+
     <header class="topbar">
       <div class="identity">
         <div class="avatar" aria-hidden="true">🪶</div>
@@ -24,15 +34,20 @@
     </header>
 
     <section id="messages" class="messages" aria-live="polite">
-      <div class="site-card" aria-label="Ken Seals introduction">
-        <span class="eyebrow">Ken Seals</span>
-        <h1>Building small, useful things for the agent-native era.</h1>
-        <p>Ask Soren what Ken is working on, leave a useful note, or poke at the public version of this site’s agent layer.</p>
-      </div>
+      <section id="siteIntro" class="site-card" aria-label="Ken Seals introduction">
+        <span class="eyebrow">Product, design, AI, endurance</span>
+        <h1>Ken Seals</h1>
+        <p class="lede">I’m a product and design leader in Austin, a dad of three, a trail runner, and a builder exploring what small teams can do with agent-native software.</p>
+        <div class="bio-grid" aria-label="Ken Seals background">
+          <p><span>Now</span> Building with AI, publishing The Ultra Minute, and experimenting with tools like ClawBell and Lettuce.</p>
+          <p><span>Before</span> Led product and design at Abound, Draft, and SquareFoot across marketplaces, fintech, and commercial real estate.</p>
+          <p><span>Outside</span> Chasing outdoor adventure and distance running. At 19, I thru-hiked the Appalachian Trail.</p>
+        </div>
+      </section>
       <div class="spacer" aria-hidden="true"></div>
-      <article class="bubble bot">
-        <strong id="welcomeTitle">Hey, I’m Soren.</strong>
-        <p id="welcomeMessage">This is ClawBell, a Ken Seals project: a public-safe Soren for quick questions and handoffs. Ask what Ken is building, or how to get your own claw chat.</p>
+      <article class="bubble bot intro-bubble">
+        <strong id="welcomeTitle">You can also talk with Soren.</strong>
+        <p id="welcomeMessage">Soren is my public OpenClaw agent. Ask about my background, current projects, The Ultra Minute, agent-native software, or leave something useful for me to see.</p>
         <div class="quick" id="starterPrompts"></div>
       </article>
     </section>
@@ -45,7 +60,7 @@
 
     <form id="composer" class="composer" autocomplete="off">
       <label class="sr-only" for="prompt">Message Soren</label>
-      <textarea id="prompt" rows="1" placeholder="Message Soren…" required></textarea>
+      <textarea id="prompt" rows="1" placeholder="Ask Soren about Ken, his work, or how to connect…" required></textarea>
       <button id="send" type="submit">Send</button>
     </form>
 

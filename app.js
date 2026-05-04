@@ -12,6 +12,8 @@ const email = document.querySelector('#email');
 const note = document.querySelector('#note');
 const chatRoot = document.querySelector('#chatRoot');
 const widgetLauncher = document.querySelector('#widgetLauncher');
+const siteIntro = document.querySelector('#siteIntro');
+const siteTop = document.querySelector('.site-top');
 const visitorId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
 const history = [];
 
@@ -20,8 +22,11 @@ const widgetMode = params.get('mode') === 'widget' || window.self !== window.top
 
 if (widgetMode) {
   document.body.classList.add('widget-mode', 'widget-closed');
+  siteIntro?.remove();
+  siteTop?.remove();
   chatRoot.hidden = true;
 } else {
+  document.body.classList.add('personal-mode');
   widgetLauncher.hidden = true;
 }
 
@@ -41,7 +46,7 @@ async function loadConfig() {
     const starter = config.starter || {};
     agentName.textContent = owner.agentName || 'Soren';
     agentSubtitle.textContent = owner.agentSubtitle || `${owner.name || 'Owner'}'s public agent`;
-    welcomeTitle.textContent = `Hey, I’m ${owner.agentName || 'Soren'}.`;
+    welcomeTitle.textContent = starter.title || welcomeTitle.textContent;
     welcomeMessage.textContent = starter.message || welcomeMessage.textContent;
     starterPrompts.innerHTML = '';
     (starter.prompts || ['What can you help with?', 'Leave a note', 'Request time']).forEach((label) => {

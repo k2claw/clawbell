@@ -44,10 +44,11 @@
     ]
   },
   "starter": {
-    "message": "This is ClawBell, a Ken Seals project: a public-safe Soren for quick questions and handoffs. Ken also runs The Ultra Minute and is exploring tools like Lettuce. Ask what he’s building, or how to get your own claw chat.",
+    "title": "You can also talk with Soren.",
+    "message": "Soren is Ken’s public OpenClaw agent. Ask about Ken’s background, current projects, The Ultra Minute, agent-native software, or leave something useful for Ken to see.",
     "prompts": [
-      "What is Ken building?",
-      "What is Lettuce?",
+      "What is Ken working on?",
+      "What is Ken’s background?",
       "What is The Ultra Minute?"
     ]
   },
