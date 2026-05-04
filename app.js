@@ -2,14 +2,11 @@ const messages = document.querySelector('#messages');
 const composer = document.querySelector('#composer');
 const prompt = document.querySelector('#prompt');
 const send = document.querySelector('#send');
-const handoff = document.querySelector('#handoff');
 const agentName = document.querySelector('#agentName');
 const agentSubtitle = document.querySelector('#agentSubtitle');
 const welcomeTitle = document.querySelector('#welcomeTitle');
 const welcomeMessage = document.querySelector('#welcomeMessage');
 const starterPrompts = document.querySelector('#starterPrompts');
-const email = document.querySelector('#email');
-const note = document.querySelector('#note');
 const chatRoot = document.querySelector('#chatRoot');
 const widgetLauncher = document.querySelector('#widgetLauncher');
 const siteIntro = document.querySelector('#siteIntro');
@@ -102,11 +99,6 @@ async function sendMessage(text) {
     const reply = data.reply || 'I can help with public questions or save a handoff for Ken.';
     addBubble('bot', escapeHtml(reply));
     history.push({ role: 'assistant', text: reply });
-    if (data.handoffSuggested) {
-      handoff.hidden = false;
-      if (!note.value) note.value = value;
-      email.focus();
-    }
   } catch {
     typing.remove();
     addBubble('system', 'Chat failed. Try again in a moment.');
@@ -123,22 +115,3 @@ composer.addEventListener('submit', event => {
 });
 
 loadConfig();
-
-handoff.addEventListener('submit', async event => {
-  event.preventDefault();
-  const payload = { email: email.value.trim(), note: note.value.trim() };
-  if (!payload.email || !payload.note) return addBubble('system', 'Add an email and a short note first.');
-  try {
-    const res = await fetch('/api/handoff', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (!res.ok) throw new Error('handoff failed');
-    addBubble('system', 'Saved. I’ll make sure Ken has the context.');
-    handoff.reset();
-    handoff.hidden = true;
-  } catch {
-    addBubble('system', 'Could not save the handoff. Try again in a moment.');
-  }
-});

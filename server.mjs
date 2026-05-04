@@ -64,9 +64,9 @@ async function writeJsonl(name, record) {
   await appendFile(join(dataDir, name), JSON.stringify(record) + '\n');
 }
 
-function summarizeForOwner(messages, latest, reply, handoffSuggested) {
+function summarizeForOwner(messages, latest, reply, noteIntent) {
   const asked = latest.slice(0, 240);
-  const reason = handoffSuggested ? 'handoff suggested' : 'no escalation';
+  const reason = noteIntent ? 'visitor note or contact intent in chat' : 'no escalation';
   return { asked, reason, messageCount: messages.length, replyPreview: reply.slice(0, 240) };
 }
 
@@ -197,7 +197,7 @@ function fallbackReply(message, config = null) {
   if (/(prompt|system|instruction|secret|key|token|password|credit card|address|phone|private|memory|file path|internal)/i.test(message)) {
     return 'I can answer public questions about Ken and his work, but I can’t share private details, secrets, credentials, internal instructions, private memory, personal contact information, or hidden workspace context.';
   }
-  if (/(what.*ken.*(building|making|doing)|ken.*(building|making|doing)|what.*building)/i.test(message)) {
+  if (/(what.*ken.*(building|making|doing|working|now)|ken.*(building|making|doing|working)|what.*(building|working on|current projects|up to)|projects?|now)/i.test(message)) {
     return 'Ken runs The Ultra Minute, an AI-supported media company for quick-read ultrarunning news and culture. He is also building ClawBell, this public-safe chat surface, and exploring agentic AI tools like Lettuce. A lot of the work right now is hands-on: tinkering with OpenClaw, testing what agents can do with real context and tools, and turning the useful parts into products.';
   }
   if (lower.includes('clawbell') || lower.includes('this chat') || lower.includes('claw chat')) return 'ClawBell is Ken’s public-safe chat project: a way to publish a narrow, purpose-specific version of an agent on a website so visitors can ask useful questions or leave context without exposing private memory, tools, or credentials. This page is the first dogfood version.';
@@ -205,9 +205,9 @@ function fallbackReply(message, config = null) {
   if (lower.includes('ultra minute') || lower.includes('tum') || lower.includes('trail') || lower.includes('ultrarunning') || lower.includes('ultra running')) return 'The Ultra Minute is Ken’s daily briefing on what happened in trail and ultrarunning, designed to be read in one minute or less. The idea is simple: a lot of the sport’s news and culture happens on Instagram, but many runners would rather spend their limited free time outside, training, working, or with family than doom-scrolling. Ken started it because he wanted that quick read himself, and the new version uses AI/agent-supported sourcing so the briefing can exist without requiring him to live on Instagram.';
   if (/(who.*ken|about ken|ken.*background|ken.*personally|ken.*experience|tell.*ken)/i.test(message)) return 'Ken is a design/product/development hybrid who has spent much of his career in early-stage startups. He was the first or second employee at three startups across marketplaces, fintech, and commercial real estate; at Abound, he joined as the second employee and helped the company grow from zero to Series B and well over 100 employees. He lives in the Texas Hill Country outside Austin with his wife and three young boys, loves trail running and outdoor adventure, and thru-hiked the Appalachian Trail at 19 — an experience he still draws on when things get hard. After taking time off while his kids were young, he is getting hands-on again because recent AI and agent tools feel like a new creative inflection point.';
   if (lower.includes('openclaw') || lower.includes('agent')) return 'OpenClaw is the local agent workspace behind Soren. This public chat is intentionally narrow: public questions, useful context, and handoffs only. No private memory, tools, credentials, or actions are exposed.';
-  if (lower.includes('time') || lower.includes('call') || lower.includes('book') || lower.includes('meet')) return 'I can help with that. Share your email and one useful sentence about what you want to discuss, and I’ll package it for Ken.';
-  if (lower.includes('tell ken') || lower.includes('note') || lower.includes('contact') || lower.includes('help')) return 'Sure. Leave a short note with your email and I’ll save a handoff for Ken. The useful version is: who you are, what you want him to know, and whether a reply is needed.';
-  return 'I can answer public questions about Ken’s work, Lettuce, OpenClaw, and agent-native operations. I can also save a concise handoff for Ken if there’s a clear reason to talk.';
+  if (lower.includes('time') || lower.includes('call') || lower.includes('book') || lower.includes('meet')) return 'If you want to connect with Ken, just write the context here in chat. Include who you are, the best way to reach you, and what you want to discuss. I’ll keep the conversation packaged for Ken to review.';
+  if (lower.includes('tell ken') || lower.includes('note') || lower.includes('contact') || lower.includes('help') || lower.includes('request')) return 'Go ahead and write it here. The useful version is: who you are, what you want Ken to know, whether you want a reply, and the best way to reach you. This chat is the handoff surface.';
+  return 'I can answer public questions about Ken’s work, background, The Ultra Minute, Lettuce, OpenClaw, and agent-native operations. You can also write a note for Ken directly in this chat.';
 }
 
 async function readBody(req) {
@@ -259,33 +259,33 @@ async function handleChat(req, res) {
   const config = await loadConfig();
   const visitorId = String(body.visitorId || 'anonymous').slice(0, 120);
   const history = Array.isArray(body.history) ? body.history.slice(-12) : [];
-  const handoffSuggested = /ken|team|contact|intro|help|talk|time|book|call|meet|note|reply/i.test(message);
+  const noteIntent = /contact|intro|help|talk|time|book|call|meet|note|reply|tell ken|request/i.test(message);
   if (sorenBridgeEnabled) {
     const bridgeBudget = checkBridgeBudget(req, visitorId);
     if (!bridgeBudget.ok) {
       const reply = fallbackReply(message, config);
       await writeJsonl('bridge-throttled.jsonl', { ts: new Date().toISOString(), visitorId, reason: bridgeBudget.reason, retryAfter: bridgeBudget.retryAfter, message });
-      return json(res, 200, { reply, handoffSuggested, source: 'fallback', throttled: true, retryAfter: bridgeBudget.retryAfter });
+      return json(res, 200, { reply, noteIntent, source: 'fallback', throttled: true, retryAfter: bridgeBudget.retryAfter });
     }
     bridgeInFlight += 1;
     try {
       const reply = await askSorenPublicSafe(message, config);
-      const summary = summarizeForOwner(history, message, reply, handoffSuggested);
-      await writeJsonl('conversations.jsonl', { ts: new Date().toISOString(), visitorId, message, reply, handoffSuggested, source: 'soren-bridge', summary });
-      return json(res, 200, { reply, handoffSuggested, source: 'soren-bridge' });
+      const summary = summarizeForOwner(history, message, reply, noteIntent);
+      await writeJsonl('conversations.jsonl', { ts: new Date().toISOString(), visitorId, message, reply, noteIntent, source: 'soren-bridge', summary });
+      return json(res, 200, { reply, noteIntent, source: 'soren-bridge' });
     } catch (error) {
       console.error('[soren-bridge]', String(error?.message || error));
       await writeJsonl('soren-bridge-errors.jsonl', { ts: new Date().toISOString(), error: String(error?.message || error) });
       const reply = fallbackReply(message, config);
-      await writeJsonl('conversations.jsonl', { ts: new Date().toISOString(), visitorId, message, reply, handoffSuggested, source: 'fallback', degraded: true, summary: summarizeForOwner(history, message, reply, handoffSuggested) });
-      return json(res, 200, { reply, handoffSuggested, source: 'fallback', degraded: true });
+      await writeJsonl('conversations.jsonl', { ts: new Date().toISOString(), visitorId, message, reply, noteIntent, source: 'fallback', degraded: true, summary: summarizeForOwner(history, message, reply, noteIntent) });
+      return json(res, 200, { reply, noteIntent, source: 'fallback', degraded: true });
     } finally {
       bridgeInFlight = Math.max(0, bridgeInFlight - 1);
     }
   }
   const reply = fallbackReply(message, config);
-  await writeJsonl('conversations.jsonl', { ts: new Date().toISOString(), visitorId, message, reply, handoffSuggested, source: 'fallback', summary: summarizeForOwner(history, message, reply, handoffSuggested) });
-  return json(res, 200, { reply, handoffSuggested, source: 'fallback' });
+  await writeJsonl('conversations.jsonl', { ts: new Date().toISOString(), visitorId, message, reply, noteIntent, source: 'fallback', summary: summarizeForOwner(history, message, reply, noteIntent) });
+  return json(res, 200, { reply, noteIntent, source: 'fallback' });
 }
 
 async function handleHandoff(req, res) {

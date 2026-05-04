@@ -45,11 +45,11 @@
   },
   "starter": {
     "title": "You can also talk with Soren.",
-    "message": "Soren is Ken’s public OpenClaw agent. Ask about Ken’s background, current projects, The Ultra Minute, agent-native software, or leave something useful for Ken to see.",
+    "message": "Soren is Ken’s public OpenClaw agent. Ask about Ken’s background, current projects, The Ultra Minute, agent-native software, or send a note Ken should see.",
     "prompts": [
-      "What is Ken working on?",
-      "What is Ken’s background?",
-      "What is The Ultra Minute?"
+      "What are you working on now?",
+      "What’s your background?",
+      "Leave a note for Ken"
     ]
   },
   "conversation": {
