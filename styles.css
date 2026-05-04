@@ -78,7 +78,37 @@ body::before {
   padding:clamp(1rem, 4vw, 2rem);
   scroll-behavior:smooth;
 }
-.spacer { flex:1 1 auto; min-height:clamp(5rem, 18vh, 10rem); }
+.site-card {
+  max-width:39rem;
+  margin:clamp(1rem, 7vh, 4.5rem) 0 clamp(1rem, 4vh, 2.75rem);
+  animation:bubble-in .32s ease-out both;
+}
+.eyebrow {
+  display:inline-flex;
+  margin-bottom:.72rem;
+  color:var(--muted);
+  font-size:.78rem;
+  font-weight:680;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.site-card h1 {
+  margin:0;
+  max-width:11ch;
+  font-size:clamp(2.45rem, 9vw, 5.8rem);
+  line-height:.92;
+  letter-spacing:-.075em;
+  font-weight:720;
+}
+.site-card p {
+  max-width:34rem;
+  margin:1.05rem 0 0;
+  color:var(--muted);
+  font-size:clamp(1.02rem, 2vw, 1.22rem);
+  line-height:1.5;
+  letter-spacing:-.025em;
+}
+.spacer { flex:1 1 auto; min-height:clamp(1.5rem, 8vh, 5rem); }
 .bubble {
   max-width:min(88%, 35rem);
   padding:.92rem 1rem;
@@ -235,6 +265,8 @@ body::before {
 .widget-launcher[hidden] { display:none!important; }
 .widget-mode { background:transparent; }
 .widget-mode::before { display:none; }
+.widget-mode .site-card { display:none; }
+.widget-mode .spacer { min-height:2rem; }
 .widget-mode .chat {
   position:fixed;
   right:1rem;
@@ -257,7 +289,9 @@ body::before {
   .topbar { padding-inline:.9rem; }
   .badge { display:none; }
   .messages { padding:.9rem; }
-  .spacer { min-height:4rem; }
+  .site-card { margin-top:1.25rem; }
+  .site-card h1 { max-width:10ch; }
+  .spacer { min-height:1.5rem; }
   .bubble { max-width:92%; }
   .quick { flex-direction:column; align-items:flex-start; }
   .composer { margin-inline:.75rem; margin-bottom:calc(.75rem + env(safe-area-inset-bottom)); }
