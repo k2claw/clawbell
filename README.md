@@ -28,6 +28,7 @@ Important: `apps/public-claw-chat/` is a separate Public OpenClaw Links / multi-
 - Admin-only bridge diagnostics at `/api/bridge-status`
 - Conversation log at `data/conversations.jsonl`
 - Handoff log at `data/handoffs.jsonl`
+- Operator digest helper with `npm run digest -- --hours=24`
 
 ## Run locally
 
@@ -67,6 +68,16 @@ node server.mjs
 - `POST /api/handoff` visitor handoff
 - `GET /api/conversations` recent conversation summaries, admin-gated when auth is enabled
 - `GET /api/bridge-status` bridge diagnostics, admin-gated when auth is enabled
+
+## Operator visibility
+
+Run a local/dogfood digest from the JSONL logs:
+
+```bash
+npm run digest -- --hours=24
+```
+
+The digest reports conversation volume, unique visitors, handoffs, bridge errors, fallback/degraded events, and a small set of chats that may deserve operator attention. This is intentionally low-noise: quiet days can summarize individual chats, but higher-volume deployments should only surface contact intent, customer/partner signal, bugs, safety issues, degraded bridge behavior, or other operator-relevant events.
 
 ## Public safety boundary
 
@@ -117,6 +128,7 @@ Before using this on Ken's real domain:
 - The bridge URL should point at a narrow constrained public-agent endpoint, not the full OpenClaw gateway.
 - Keep bridge throttles conservative: `SOREN_BRIDGE_MAX_CONCURRENT=3`, `SOREN_BRIDGE_RATE_LIMIT_MAX=4`, and `SOREN_BRIDGE_GLOBAL_RATE_LIMIT_MAX=30` per window.
 - Add persistent disk/database before relying on logs long-term.
+- Add a scheduled operator digest/alert path before expecting Ken to monitor usage manually.
 - Smoke test `/`, `/?mode=widget`, `/admin.html`, `/api/chat`, `/api/handoff`, `/api/bridge-status`, rate limits, and prompt-injection refusal.
 - Point Ken's personal domain at the Render service only after the above passes.
 
