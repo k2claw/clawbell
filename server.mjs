@@ -14,6 +14,8 @@ const openclawBin = process.env.OPENCLAW_BIN || '/Users/oc/.nvm/versions/node/v2
 const sorenSessionId = process.env.SOREN_SESSION_ID || 'clawbell-public-v0';
 const sorenBridgeUrl = process.env.SOREN_BRIDGE_URL_OVERRIDE || process.env.SOREN_BRIDGE_URL || '';
 const sorenBridgeToken = process.env.SOREN_BRIDGE_TOKEN_OVERRIDE || process.env.SOREN_BRIDGE_TOKEN || '';
+const sorenBridgeAccessClientId = process.env.SOREN_BRIDGE_ACCESS_CLIENT_ID || '';
+const sorenBridgeAccessClientSecret = process.env.SOREN_BRIDGE_ACCESS_CLIENT_SECRET || '';
 const adminToken = process.env.ADMIN_TOKEN || '';
 const requireAdmin = process.env.REQUIRE_ADMIN_AUTH === '1';
 const rateLimitWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS || 60000);
@@ -198,7 +200,9 @@ async function askSorenPublicSafe(message, config, history = []) {
         'content-type': 'application/json',
         // Keeps temporary localtunnel bridges machine-to-machine friendly during dogfood.
         'bypass-tunnel-reminder': 'true',
-        ...(sorenBridgeToken ? { authorization: `Bearer ${sorenBridgeToken}` } : {})
+        ...(sorenBridgeToken ? { authorization: `Bearer ${sorenBridgeToken}` } : {}),
+        ...(sorenBridgeAccessClientId ? { 'cf-access-client-id': sorenBridgeAccessClientId } : {}),
+        ...(sorenBridgeAccessClientSecret ? { 'cf-access-client-secret': sorenBridgeAccessClientSecret } : {})
       },
       body: JSON.stringify({ prompt, sessionId: sorenSessionId })
     });

@@ -59,6 +59,19 @@ SOREN_BRIDGE_TOKEN=replace-with-bridge-token \
 node server.mjs
 ```
 
+## Agent install + bridge recipes
+
+ClawBell's public app is separate from the bridge transport. During setup, an operator's agent should pick the lowest-friction safe bridge:
+
+- fallback-only when no live agent bridge is ready
+- Tailscale Funnel for fast dogfood or personal-operator installs
+- Cloudflare Tunnel for the recommended public-production route
+- custom HTTPS bridge for other reverse proxies or hosting setups
+
+Start with `INSTALL_FOR_AGENTS.md`, then use the recipe under `bridge-recipes/`.
+
+The safety boundary is the same for every transport: public ClawBell calls a narrow authenticated bridge adapter, never the full OpenClaw Gateway or private workspace.
+
 ## API
 
 - `GET /health`
@@ -108,7 +121,7 @@ Already implemented:
 
 Known gaps before replacing a real website:
 
-- The current dogfood bridge still depends on a temporary constrained bridge endpoint/tunnel. Replace it with durable public-agent infrastructure before broad public use.
+- The current dogfood bridge still depends on a constrained bridge endpoint. Use a documented durable transport such as Tailscale Funnel or Cloudflare Tunnel before broad public use.
 - Logs are local JSONL files, not durable database-backed storage.
 - Render free filesystem persistence is not reliable long-term.
 - Admin auth should be verified on the live service with a strong `ADMIN_TOKEN` before domain cutover.

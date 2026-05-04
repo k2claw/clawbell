@@ -17,6 +17,10 @@ services:
         sync: false
       - key: SOREN_BRIDGE_TOKEN
         sync: false
+      - key: SOREN_BRIDGE_ACCESS_CLIENT_ID
+        sync: false
+      - key: SOREN_BRIDGE_ACCESS_CLIENT_SECRET
+        sync: false
       - key: ADMIN_TOKEN
         sync: false
       - key: MAX_MESSAGE_CHARS
