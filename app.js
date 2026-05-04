@@ -97,7 +97,12 @@ async function sendMessage(text) {
     const data = await res.json();
     typing.remove();
     const reply = data.reply || 'I can help with public questions or save a handoff for Ken.';
-    addBubble('bot', escapeHtml(reply));
+    const meta = data.source === 'soren-bridge'
+      ? '<small class="bubble-meta">Connected to public Soren</small>'
+      : data.degraded || data.source === 'fallback'
+        ? '<small class="bubble-meta">Limited mode</small>'
+        : '';
+    addBubble('bot', `${escapeHtml(reply)}${meta}`);
     history.push({ role: 'assistant', text: reply });
   } catch {
     typing.remove();
