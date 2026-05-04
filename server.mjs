@@ -181,7 +181,11 @@ async function askSorenPublicSafe(message, config, history = []) {
       },
       body: JSON.stringify({ prompt, sessionId: sorenSessionId })
     });
-    if (!response.ok) throw new Error(`bridge_http_${response.status}`);
+    if (!response.ok) {
+      let bridgeHost = 'unknown-host';
+      try { bridgeHost = new URL(sorenBridgeUrl).host; } catch {}
+      throw new Error(`bridge_http_${response.status}_${bridgeHost}`);
+    }
     const data = await response.json();
     const reply = String(data.reply || '').trim();
     if (!reply) throw new Error('empty_bridge_reply');
