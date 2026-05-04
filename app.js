@@ -83,7 +83,7 @@ async function sendMessage(text) {
   prompt.value = '';
   addBubble('user', escapeHtml(value));
   history.push({ role: 'user', text: value });
-  const typing = addBubble('bot', 'Checking public-safe context…');
+  const typing = addBubble('bot typing', '<span>Thinking in public-safe context</span><span class="typing-dots" aria-hidden="true"><i></i><i></i><i></i></span>');
   send.disabled = true;
   prompt.disabled = true;
   try {
